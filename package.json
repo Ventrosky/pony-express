@@ -1,0 +1,29 @@
+{
+  "name": "pony-express",
+  "version": "1.0.0",
+  "description": "Full-featured **Express** backend built through the book [\"Functional Design Patterns for Express.js\"] (https://pragprog.com/book/d-jmexpress/functional-design-patterns-for-express-js) by *Jonathan Lee Martin*",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ventrosky/pony-express.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ventrosky/pony-express/issues"
+  },
+  "homepage": "https://github.com/Ventrosky/pony-express#readme",
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  },
+  "dependencies": {
+    "csv-stringify": "^5.3.3",
+    "express": "^4.17.1",
+    "xmlbuilder": "^13.0.2"
+  }
+}
