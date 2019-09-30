@@ -1,4 +1,5 @@
 const express = require('express');
+const requireAuth = require('../lib/require-auth');
 const users = require('../fixtures/users');
 
 const stringify = require('csv-stringify');
@@ -32,9 +33,8 @@ let getUserRoute = (req, res) => {
     res.send(user);
 };
 
-//let router = express.Router();
 let usersRouter = express.Router();
-
+usersRouter.use(requireAuth);
 usersRouter.get('/', getUsersRoute);
 usersRouter.get('/:id', getUserRoute);
 

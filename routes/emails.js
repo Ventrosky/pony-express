@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const requireAuth = require('../lib/require-auth');
 const generateId = require('../lib/generate-id');
 const emails = require('../fixtures/emails');
 
@@ -77,6 +78,8 @@ let deleteEmailRoute = (req, res) => {
 };
 
 let emailsRouter = express.Router();
+
+emailsRouter.use(requireAuth);
 
 emailsRouter.route('/')
     .get(getEmailsRoute)
