@@ -46,8 +46,9 @@ let getEmailRoute = (req, res) => {
 }
 
 let createEmailRoute = async (req, res) => {
-    let attachments = (req.files || []).map(file =>
-        '/uploads/' + file.filename
+    let attachments = (req.files || []).map(file =>{
+            return {"url": '/uploads/' + file.filename, "type": file.mimetype};
+        }
     );
     let newEmail = {...req.body, id: generateId(), attachments};
     emails.push(newEmail);
@@ -57,7 +58,14 @@ let createEmailRoute = async (req, res) => {
 
 let updateEmailRoute = async (req, res) => {
     let email = emails.find(email => email.id === req.params.id);
+
+    let newAttachments = req.files.map(file =>{
+            return {"url": '/uploads/' + file.filename, "type": file.mimetype};
+        }
+    );
+    req.body.attachments = [...email.attachments, ...newAttachments]
     Object.assign(email, req.body);
+    
     res.status(200);
     res.send(email);
 };
@@ -74,13 +82,21 @@ emailsRouter.route('/')
     .get(getEmailsRoute)
     .post(
         bodyParser.json(),
+        bodyParser.urlencoded({ extended: true }), 
         upload.array('attachments'),
         createEmailRoute
     );
 
 emailsRouter.route('/:id')
     .get(getEmailRoute)
-    .patch(bodyParser.json(), updateEmailRoute)
+    .patch(
+        bodyParser.json(), 
+        bodyParser.urlencoded({ extended: true }), 
+        upload.array('attachments'),
+        updateEmailRoute)
     .delete(deleteEmailRoute);
 
-module.exports = emailsRouter;
+module.exports = {
+    emailsRouter,
+    emails
+}
