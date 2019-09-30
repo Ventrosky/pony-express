@@ -1,7 +1,11 @@
+const path = require('path');
 const express = require('express');
-const jsonBodyParser = require('../lib/json-body-parser');
+const bodyParser = require('body-parser');
+const multer = require('multer');
 const generateId = require('../lib/generate-id');
 const emails = require('../fixtures/emails');
+
+let upload = multer({ dest: path.join(__dirname, '../uploads')});
 
 const stringify = require('csv-stringify');
 const builder = require('xmlbuilder');
@@ -42,7 +46,10 @@ let getEmailRoute = (req, res) => {
 }
 
 let createEmailRoute = async (req, res) => {
-    let newEmail = {...req.body, id: generateId()};
+    let attachments = (req.files || []).map(file =>
+        '/uploads/' + file.filename
+    );
+    let newEmail = {...req.body, id: generateId(), attachments};
     emails.push(newEmail);
     res.status(201);
     res.send(newEmail);
@@ -65,11 +72,15 @@ let emailsRouter = express.Router();
 
 emailsRouter.route('/')
     .get(getEmailsRoute)
-    .post(jsonBodyParser, createEmailRoute);
+    .post(
+        bodyParser.json(),
+        upload.array('attachments'),
+        createEmailRoute
+    );
 
 emailsRouter.route('/:id')
     .get(getEmailRoute)
-    .patch(jsonBodyParser, updateEmailRoute)
+    .patch(bodyParser.json(), updateEmailRoute)
     .delete(deleteEmailRoute);
 
 module.exports = emailsRouter;
