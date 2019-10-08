@@ -114,7 +114,4 @@ emailsRouter.route('/:id')
         enforce(deleteEmailPolicy),
         deleteEmailRoute);
 
-module.exports = {
-    emailsRouter,
-    emails
-}
+module.exports = emailsRouter;
