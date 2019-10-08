@@ -5,7 +5,7 @@ const express = require('express');
 
 const tokensRouter = require('./routes/tokens');
 const usersRouter = require('./routes/users');
-const {emailsRouter, emails} = require('./routes/emails');
+const emailsRouter = require('./routes/emails');
 const uploadsRouter = require('./routes/uploads');
 const logger = require('./lib/logger');
 const basicAuth = require('./lib/basic-auth');
