@@ -12,5 +12,13 @@
     "subject": "RE: Hello!",
     "body": "I got your message.",
     "attachments": []
+  },
+  { "id": "3",
+    "from": "1",
+    "to": "4",
+    "subject": "On Lisp",
+    "body": "Check this out!",
+    "attachments": [ { "url": "/uploads/49022f9d0c5392153f528a1b5efbd830",
+      "type": "image/png" } ]
   }
 ]

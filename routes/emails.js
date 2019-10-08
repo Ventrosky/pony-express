@@ -5,6 +5,7 @@ const multer = require('multer');
 const requireAuth = require('../lib/require-auth');
 const generateId = require('../lib/generate-id');
 const enforce = require('../lib/enforce');
+const NotFound = require('../lib/not-found');
 const emails = require('../fixtures/emails');
 
 let upload = multer({ dest: path.join(__dirname, '../uploads')});
@@ -34,15 +35,10 @@ let getEmailsRoute = (req, res) => {
         }
     });
 };
-class NotFound extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'NotFound';
-    }
-}
 
 let getEmailRoute = (req, res) => {
     let email = emails.find(email => email.id === req.params.id);
+    req.authorize(email);
     if (!email) { throw new NotFound(); }
     res.send(email);
 }
@@ -53,6 +49,7 @@ let createEmailRoute = async (req, res) => {
         }
     );
     let newEmail = {...req.body, id: generateId(), attachments};
+    req.authorize(newEmail);
     emails.push(newEmail);
     res.status(201);
     res.send(newEmail);
@@ -84,6 +81,11 @@ let updateEmailPolicy = (user, email) => user.id === email.from;
 
 let deleteEmailPolicy = (user, email) => user.id === email.to;
 
+let getEmailPolicy = (user, email) => (user.id === email.to) || (user.id === email.from);
+
+let createEmailPolicy = (user, email) => user.id === email.from;
+
+
 let emailsRouter = express.Router();
 
 emailsRouter.use(requireAuth);
@@ -91,6 +93,7 @@ emailsRouter.use(requireAuth);
 emailsRouter.route('/')
     .get(getEmailsRoute)
     .post(
+        enforce(createEmailPolicy),
         bodyParser.json(),
         bodyParser.urlencoded({ extended: true }), 
         upload.array('attachments'),
@@ -98,7 +101,9 @@ emailsRouter.route('/')
     );
 
 emailsRouter.route('/:id')
-    .get(getEmailRoute)
+    .get(
+        enforce(getEmailPolicy), 
+        getEmailRoute)
     .patch(
         enforce(updateEmailPolicy),
         bodyParser.json(), 
